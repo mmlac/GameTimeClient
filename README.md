@@ -1,2 +1,2 @@
 # GameTimeClient
-GameTime tracking client for <tbd>
+GameTime tracking client for &lt;tbd>
