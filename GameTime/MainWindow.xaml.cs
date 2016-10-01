@@ -1,4 +1,8 @@
-﻿using GameTimeClient;
+﻿using System;
+using System.Data.Entity;
+using System.Data.SQLite;
+using System.IO;
+using System.Linq;
 using System.Windows;
 
 namespace GameTime
@@ -8,16 +12,19 @@ namespace GameTime
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
+
             InitializeComponent();
 
-            ProcessLogger procLog = new ProcessLogger();
+            Data data = new Data();
 
-
+            ProcessLogger procLog = new ProcessLogger(data);
 
         }
 
     }
+        
 
 }

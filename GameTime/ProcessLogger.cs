@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
-namespace GameTimeClient
+namespace GameTime
 {
     /// <summary>
     ///     ProcessLogger is responsible for tracking 3D applitacions and
@@ -10,12 +11,13 @@ namespace GameTimeClient
     class ProcessLogger
     {
 
-        public ProcessLogger()
-        {
-            // init the DB connection
+        Data data;
 
-            // start Timer to run update3DProcesses()
-            
+        public ProcessLogger(Data _data)
+        {
+            data = _data;
+
+            Timer timer = new Timer(log3DProcesses, 1, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(8));
         }
 
         /// <summary>
@@ -23,14 +25,12 @@ namespace GameTimeClient
         ///     them to the database.
         /// </summary>
         /// <param name="state">Timer state</param>
-        private void update3DProcesses(object state)
+        private void log3DProcesses(object state)
         {
+            Console.WriteLine("Called Timer");
             List<String> procNames = ProcessChecker.Get3DProcessNames();
-            // save to DB
-
-            // save a ping to DB (when did we last check) to make sure we don't
-            // count time when PC is sleeping / turned off before we could track
-            // a shutdown of the game
+            Console.WriteLine(String.Join(", ", procNames));
+            //data.save3DProcessNames(procNames);
         }
 
     }

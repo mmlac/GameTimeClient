@@ -7,7 +7,7 @@ using System.Text;
 
 
 
-namespace GameTimeClient
+namespace GameTime
 {
     /// <summary>
     ///    This class contains logic to interoparate with processes and
