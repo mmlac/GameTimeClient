@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameTime
 {
@@ -13,7 +10,6 @@ namespace GameTime
     /// </summary>
     class Data
     {
-
 
         private const String DATABASE_FILENAME = "GameTime.sqlite";
 
@@ -27,6 +23,7 @@ namespace GameTime
                     "id INTEGER PRIMARY KEY, " +
                     "time DEFAULT CURRENT_TIMESTAMP" +
                     ")";
+
         private const String CREATE_PROC_3D_TABLE =
             "CREATE TABLE IF NOT EXISTS proc3d (" +
             "id INTEGER PRIMARY KEY, " +
@@ -39,6 +36,7 @@ namespace GameTime
 
         private const String INSERT_PROC_3D_TEMPLATE =
             "INSERT INTO proc3d (programs) VALUES ('{0}');";
+
 
         /// <summary>
         ///     Initializes the database and creates the tables if they
@@ -101,7 +99,5 @@ namespace GameTime
             }
         }
     }
-
-
 
 }

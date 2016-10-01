@@ -204,6 +204,15 @@ namespace GameTime
         };
 
 
+
+
+        /// <summary>
+        ///     Get the process names that load D3D or OpenGL
+        /// </summary>
+        /// <param name="ignoreProcs">
+        ///     Process names that should be excluded
+        /// </param>
+        /// <returns>List of process names</returns>
         public static List<String> Get3DProcessNames(List<String> ignoreProcs)
         {
             List<UInt32> procIds = ListProcesses();
@@ -393,6 +402,7 @@ namespace GameTime
 
         }
 
+
         /// <summary>
         ///     A case insensitive String.Contains()
         ///     Source: http://stackoverflow.com/a/15464440/846655
@@ -404,6 +414,7 @@ namespace GameTime
         {
             return CultureInfo.CurrentCulture.CompareInfo.IndexOf(paragraph, word, CompareOptions.IgnoreCase) >= 0;
         }
+
 
         /// <summary>
         ///     Only return the last path element.
