@@ -68,13 +68,23 @@ namespace GameTime
             };
         }
 
+
+
+        /// <summary>
+        ///     Stores the result of the ProcChecker in the database and also
+        ///     saves a ping that helps to make sure that the PC was not
+        ///     sleeping and we were tracking even though there were no 
+        ///     matching processes.
+        /// </summary>
+        /// <param name="procNames"></param>
         public void save3DProcessNames(List<String> procNames)
         {
             using (SQLiteConnection sqlConn =
                 new SQLiteConnection(DATABASE_CONNECTION_STRING))
             {
                 String procString = String.Join(",", procNames);
-                String procQuery = String.Format(INSERT_PROC_3D_TEMPLATE, procNames);
+                String procQuery = 
+                    String.Format(INSERT_PROC_3D_TEMPLATE, procString);
                 
                 SQLiteCommand pingCmd = 
                     new SQLiteCommand(INSERT_PING_CMD, sqlConn);

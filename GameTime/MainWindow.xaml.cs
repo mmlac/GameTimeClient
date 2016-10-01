@@ -1,8 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace GameTime
@@ -13,6 +15,9 @@ namespace GameTime
     public partial class MainWindow : Window
     {
 
+        ProcessLogger procLog;
+        Thread processLoggerThread;
+
         public MainWindow()
         {
 
@@ -20,11 +25,25 @@ namespace GameTime
 
             Data data = new Data();
 
-            ProcessLogger procLog = new ProcessLogger(data);
+            procLog = new ProcessLogger(data);
+
+            processLoggerThread = new Thread(procLog.log3DProcesses);
+            processLoggerThread.Start();
 
         }
 
+    
+
+    private void Window_Closing(object sender, CancelEventArgs e)
+    {
+        if(null != processLoggerThread)
+            {
+                procLog.requestStop();
+            }
+        e.Cancel = true;
     }
-        
+
+
+    }
 
 }

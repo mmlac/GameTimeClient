@@ -204,10 +204,10 @@ namespace GameTime
         };
 
 
-        public static List<String> Get3DProcessNames()
+        public static List<String> Get3DProcessNames(List<String> ignoreProcs)
         {
             List<UInt32> procIds = ListProcesses();
-            List<String> proc3DList = Filter3DProcesses(procIds);
+            List<String> proc3DList = Filter3DProcesses(procIds, ignoreProcs);
 #if DEBUG
             Console.WriteLine("Found {0} processes.", procIds.Count);
             Console.WriteLine("Found {0} 3D processes", proc3DList.Count);
@@ -222,13 +222,6 @@ namespace GameTime
         /// <returns>List of process IDs</returns>
         private static List<UInt32> ListProcesses()
         {
-#if DEBUG
-            for (int l = 0; l < 10; ++l)
-            {
-                Console.WriteLine();
-            }
-#endif
-
             List<UInt32> proclist = new List<UInt32>();
             UInt32 arraySize = 1024;
             UInt32 arrayBytesSize = arraySize * sizeof(UInt32);
@@ -276,8 +269,20 @@ namespace GameTime
         }
 
 
-
-        private static List<String> Filter3DProcesses(List<UInt32> procIds)
+        /// <summary>
+        ///     Get a list of process executable names that have loaded either
+        ///     DirectX or OpenGL modules.
+        ///     Ignore processes on the default ignore list and ones passed
+        ///     in as ignoreProcs parameter.
+        /// </summary>
+        /// <param name="procIds">Process IDs to scan modules of</param>
+        /// <param name="ignoreProcs">
+        ///     List of ignored process executable names
+        /// </param>
+        /// <returns>List of process executable names</returns>
+        private static List<String> Filter3DProcesses(
+            List<UInt32> procIds,
+            List<String> ignoreProcs)
         {
             List<String> procList = new List<String>();
             foreach (UInt32 pid in procIds)
@@ -307,7 +312,8 @@ namespace GameTime
                 GetProcessImageFileName(procPtr, procName, 2000);
                 String processName = CutPath(procName.ToString());
 
-                if (ignoreProcessList.Contains(processName))
+                if (ignoreProcessList.Contains(processName) ||
+                    ignoreProcs.Contains(processName))
                     continue;
 
 
@@ -371,21 +377,17 @@ namespace GameTime
                     if (haveFound3DModule)
                     {
                         procList.Add(processName);
+#if DEBUG
                         Console.WriteLine("File: {0}  Modules: {1}", 
                             processName, String.Join(",", modNames));
+                        Console.WriteLine();
+#endif
                     }
                 }
 
                 // Must free the GCHandle object
                 gch.Free();
             }
-#if DEBUG
-            Console.WriteLine("Processes with 3D modules loaded: {0}", procList.Count);
-            for (int l = 0; l < 10; ++l)
-            {
-                Console.WriteLine();
-            }
-#endif
 
             return procList;
 
