@@ -102,15 +102,22 @@ namespace GameTime.Tracking
                 try
                 {
                     Console.WriteLine("AGGREGATING......");
-                    List<DateTime> pingList = storage.getPings();
-                    Console.WriteLine(String.Join(", ", pingList));
+                    var procs = storage.get3DProcesses();
 
                     Transfer t = new Transfer(storage);
-                    List<TimeSlice> alives = t.slicePings(pingList);
-                    Console.WriteLine(String.Join(",", alives));
+                    Dictionary<String, List<TimeSlice>> slicedProcs =
+                        t.sliceProcs(procs);
 
-                    if (pingList.Count > 0)
-                        storage.deletePingsUpTo(pingList[pingList.Count - 1]);
+#if DEBUG
+                    foreach(var k in slicedProcs)
+                    {
+                        Console.WriteLine("Key: {0} - Slices: {1}",
+                            k.Key, String.Join(",", k.Value));
+                    }
+#endif
+
+                    //if (pingList.Count > 0)
+                    //    storage.deletePingsUpTo(pingList[pingList.Count - 1]);
                 }
                 catch (Exception e)
                 {

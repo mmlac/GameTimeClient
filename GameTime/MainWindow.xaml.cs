@@ -29,7 +29,7 @@ namespace GameTime
             procLog = new ProcessLogger(storage);
 
             processLoggerThread = new Thread(procLog.log3DProcesses);
-            processLoggerThread.Start();
+            //processLoggerThread.Start();
 
             processAggregateThread = new Thread(procLog.aggregate);
             processAggregateThread.Start();

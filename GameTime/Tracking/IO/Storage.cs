@@ -43,6 +43,9 @@ namespace GameTime.Tracking.IO
         private const String DELETE_PINGS_UNTIL =
             "DELETE FROM ping WHERE time <= '{0}'";
 
+        private const String SELECT_ALL_3D_PROCS =
+            "SELECT time, programs FROM proc3D";
+
 
         /// <summary>
         ///     Initializes the database and creates the tables if they
@@ -55,7 +58,7 @@ namespace GameTime.Tracking.IO
                 SQLiteConnection.CreateFile(DATABASE_FILENAME);
             }
 
-            using (SQLiteConnection sqlConn =
+            using (var sqlConn =
                 new SQLiteConnection(DATABASE_CONNECTION_STRING))
             {
 
@@ -83,16 +86,16 @@ namespace GameTime.Tracking.IO
         /// <param name="procNames"></param>
         public void save3DProcessNames(List<String> procNames)
         {
-            using (SQLiteConnection sqlConn =
+            using (var sqlConn =
                 new SQLiteConnection(DATABASE_CONNECTION_STRING))
             {
                 String procString = String.Join(",", procNames);
                 String procQuery = 
                     String.Format(INSERT_PROC_3D_TEMPLATE, procString);
                 
-                SQLiteCommand pingCmd = 
+                var pingCmd = 
                     new SQLiteCommand(INSERT_PING_CMD, sqlConn);
-                SQLiteCommand procCmd = new SQLiteCommand(procQuery, sqlConn);
+                var procCmd = new SQLiteCommand(procQuery, sqlConn);
 
                 sqlConn.Open();
                 using (var transaction = sqlConn.BeginTransaction())
@@ -107,11 +110,11 @@ namespace GameTime.Tracking.IO
 
         public List<DateTime> getPings()
         {
-            List<DateTime> pingTimes = new List<DateTime>();
-            using (SQLiteConnection sqlConn =
+            var pingTimes = new List<DateTime>();
+            using (var sqlConn = 
                 new SQLiteConnection(DATABASE_CONNECTION_STRING))
             {
-                SQLiteCommand getPingsCommand =
+                var getPingsCommand = 
                     new SQLiteCommand(SELECT_ALL_PINGS, sqlConn);
 
                 sqlConn.Open();
@@ -145,6 +148,39 @@ namespace GameTime.Tracking.IO
             SQLiteCommand delCmd = new SQLiteCommand(String.Format(
                 DELETE_PINGS_UNTIL,
                 to.ToUniversalTime().ToString("yyyy'-'MM'-'dd HH':'mm':'ss")));
+        }
+
+
+        public List<Tuple<DateTime, String>> get3DProcesses()
+        {
+            var procList = new List<Tuple<DateTime, String>>();
+            using (var sqlConn =
+                new SQLiteConnection(DATABASE_CONNECTION_STRING))
+            {
+                var getPingsCommand =
+                    new SQLiteCommand(SELECT_ALL_3D_PROCS, sqlConn);
+
+                sqlConn.Open();
+                SQLiteDataReader r = getPingsCommand.ExecuteReader();
+
+                while (r.Read())
+                {
+                    try
+                    {
+                        procList.Add(new Tuple<DateTime, string>(
+                            DateTime.Parse(Convert.ToString(r["time"])),
+                            Convert.ToString(r["programs"])));
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(
+                            "Error reading the following DateTime: {0} - {1}",
+                            r["time"], e.Message);
+                    }
+                }
+
+                return procList;
+            }
         }
     }
 

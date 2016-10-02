@@ -16,32 +16,63 @@ namespace GameTime.Tracking.IO
             storage = _storage;
         }
 
-        public List<TimeSlice> slicePings(List<DateTime> pingList)
-        {
-            List<TimeSlice> slices = new List<TimeSlice>();        
-            TimeSlice ts = new TimeSlice();
 
-            foreach (DateTime p in pingList)
-            {    
-                bool add = ts.add(p);
-                if (false == add)
+
+        public Dictionary<String, List<TimeSlice>> sliceProcs(
+            List<Tuple<DateTime, String>> procList)
+        {
+            var processSlicesDict = new Dictionary<String, List<TimeSlice>>();
+            var currentSlices     = new Dictionary<String, TimeSlice>();
+
+            foreach (var procTrack in procList)
+            {
+                addDict(ref processSlicesDict, ref currentSlices, 
+                    "ping", procTrack.Item1);
+
+                if (false == procTrack.Item2.Equals(""))
                 {
-                    slices.Add(ts);
-                    ts = new TimeSlice();
-                    ts.add(p);
+                    string[] procs = procTrack.Item2.Split(',');
+                    foreach (string p in procs)
+                    {
+                        addDict(ref processSlicesDict, ref currentSlices,
+                            p, procTrack.Item1);
+                    }
                 }
             }
 
-            if (!ts.isEmpty())
-                slices.Add(ts);
+            foreach(var c in currentSlices)
+            {
+                processSlicesDict[c.Key].Add(c.Value);
+            }
 
-            return slices;
+            return processSlicesDict;
         }
 
-        public void getGameTime()
-        {
 
-        } 
+
+        private void addDict(
+            ref Dictionary<String, List<TimeSlice>> procSlices,
+            ref Dictionary<String, TimeSlice> currentSlice,
+            String p,
+            DateTime dt)
+        {
+            if ( false == currentSlice.ContainsKey(p) )
+                currentSlice.Add(p, new TimeSlice());
+
+            if ( false == procSlices.ContainsKey(p) )
+                procSlices.Add(p, new List<TimeSlice>());
+
+            if ( false == currentSlice[p].add(dt) )
+            {
+                procSlices[p].Add(currentSlice[p]);
+                currentSlice[p] = new TimeSlice();
+                currentSlice[p].add(dt);
+            }
+        }
+
+
+
+       
     }
 
 
