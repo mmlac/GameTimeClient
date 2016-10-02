@@ -1,9 +1,9 @@
-﻿using System;
+﻿using GameTime.Tracking;
+using GameTime.Tracking.IO;
+using GameTime.Tracking.Utility;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Entity;
-using System.Data.SQLite;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 
@@ -17,32 +17,49 @@ namespace GameTime
 
         ProcessLogger procLog;
         Thread processLoggerThread;
+        Thread processAggregateThread;
 
         public MainWindow()
         {
 
             InitializeComponent();
 
-            Data data = new Data();
+            Storage storage = new Storage();
 
-            procLog = new ProcessLogger(data);
+            procLog = new ProcessLogger(storage);
 
             processLoggerThread = new Thread(procLog.log3DProcesses);
             processLoggerThread.Start();
 
+            processAggregateThread = new Thread(procLog.aggregate);
+            processAggregateThread.Start();
+
         }
 
-    
 
-    private void Window_Closing(object sender, CancelEventArgs e)
-    {
-        if(null != processLoggerThread)
+
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            if (null != processLoggerThread)
             {
-                procLog.requestStop();
+                procLog.requestStopLogging();
+                procLog.requestStopAggregating();
             }
-        e.Cancel = true;
-    }
 
+            //Asked Threads to stop, waiting for them to shut down....
+
+            processLoggerThread.Join(1000);
+            processAggregateThread.Join(1000);
+
+            e.Cancel = false;
+        }
+
+
+        private void ButtonClick(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("BUTTONED!!!");
+        }
 
     }
 

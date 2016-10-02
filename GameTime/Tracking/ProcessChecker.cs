@@ -1,13 +1,13 @@
-﻿using System;
+﻿using GameTime.Tracking.Utility;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
 
 
-namespace GameTime
+namespace GameTime.Tracking
 {
     /// <summary>
     ///    This class contains logic to interoparate with processes and
@@ -369,8 +369,8 @@ namespace GameTime
                             (int)(strbld.Capacity));
 
                         String module = CutPath(strbld.ToString());
-                        if (ContainsCaseInsensitive(module, "d3d") ||
-                            ContainsCaseInsensitive(module, "opengl"))
+                        if (Util.ContainsCaseInsensitive(module, "d3d") ||
+                            Util.ContainsCaseInsensitive(module, "opengl"))
                         {
                             haveFound3DModule = true;
 #if DEBUG
@@ -403,17 +403,7 @@ namespace GameTime
         }
 
 
-        /// <summary>
-        ///     A case insensitive String.Contains()
-        ///     Source: http://stackoverflow.com/a/15464440/846655
-        /// </summary>
-        /// <param name="paragraph">String to search through</param>
-        /// <param name="word">String to search for</param>
-        /// <returns>True if the word was found in paragraph</returns>
-        private static bool ContainsCaseInsensitive(String paragraph, String word)
-        {
-            return CultureInfo.CurrentCulture.CompareInfo.IndexOf(paragraph, word, CompareOptions.IgnoreCase) >= 0;
-        }
+        
 
 
         /// <summary>

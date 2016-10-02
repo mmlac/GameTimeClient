@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 
-namespace GameTime
+namespace GameTime.Tracking.IO
 {
     /// <summary>
     ///     Class handling all SQL related tasks
     /// </summary>
-    class Data
+    class Storage
     {
 
         private const String DATABASE_FILENAME = "GameTime.sqlite";
@@ -37,12 +37,18 @@ namespace GameTime
         private const String INSERT_PROC_3D_TEMPLATE =
             "INSERT INTO proc3d (programs) VALUES ('{0}');";
 
+        private const String SELECT_ALL_PINGS =
+            "SELECT time FROM ping";
+
+        private const String DELETE_PINGS_UNTIL =
+            "DELETE FROM ping WHERE time <= '{0}'";
+
 
         /// <summary>
         ///     Initializes the database and creates the tables if they
         ///     are not present
         /// </summary>
-        public Data()
+        public Storage()
         {
             if (false == File.Exists(DATABASE_FILENAME))
             {
@@ -97,6 +103,48 @@ namespace GameTime
                 }
 
             }
+        }
+
+        public List<DateTime> getPings()
+        {
+            List<DateTime> pingTimes = new List<DateTime>();
+            using (SQLiteConnection sqlConn =
+                new SQLiteConnection(DATABASE_CONNECTION_STRING))
+            {
+                SQLiteCommand getPingsCommand =
+                    new SQLiteCommand(SELECT_ALL_PINGS, sqlConn);
+
+                sqlConn.Open();
+                SQLiteDataReader r = getPingsCommand.ExecuteReader();
+
+                while(r.Read())
+                {
+                    try
+                    {
+                        pingTimes.Add(
+                            DateTime.Parse(Convert.ToString(r["time"])));
+                    } catch (Exception e)
+                    {
+                        Console.WriteLine(
+                            "Error reading the following DateTime: {0} - {1}",
+                            r["time"], e.Message);
+                    }
+                }
+
+                return pingTimes;
+            }
+        }
+
+        /// <summary>
+        ///     Delete all the (processed) ping entries up to (and including)
+        ///     the given DateTime
+        /// </summary>
+        /// <param name="to">inclusive end time of delete</param>
+        public void deletePingsUpTo(DateTime to)
+        {
+            SQLiteCommand delCmd = new SQLiteCommand(String.Format(
+                DELETE_PINGS_UNTIL,
+                to.ToUniversalTime().ToString("yyyy'-'MM'-'dd HH':'mm':'ss")));
         }
     }
 
