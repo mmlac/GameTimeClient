@@ -50,7 +50,7 @@ namespace GameTime.Tracking
         /// </summary>
         public void requestStopAggregating()
         {
-            _shouldStopLogging = true;
+            _shouldStopAggregating = true;
         }
 
 

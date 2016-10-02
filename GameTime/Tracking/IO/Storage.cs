@@ -6,7 +6,7 @@ using System.IO;
 namespace GameTime.Tracking.IO
 {
     /// <summary>
-    ///     Class handling all SQL related tasks
+    ///     Class handling all SQL related tasks    
     /// </summary>
     class Storage
     {
