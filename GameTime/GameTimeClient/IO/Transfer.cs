@@ -1,8 +1,9 @@
-﻿using GameTime.Tracking.Utility;
+﻿using GameTimeClient.Tracking.Utility;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace GameTime.Tracking.IO
+namespace GameTimeClient.Tracking.IO
 {
     class Transfer
     {
@@ -69,6 +70,9 @@ namespace GameTime.Tracking.IO
                 currentSlice[p].add(dt);
             }
         }
+
+
+        
 
 
 

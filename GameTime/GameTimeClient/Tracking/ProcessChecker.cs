@@ -1,4 +1,4 @@
-﻿using GameTime.Tracking.Utility;
+﻿using GameTimeClient.Tracking.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 
 
 
-namespace GameTime.Tracking
+namespace GameTimeClient.Tracking
 {
     /// <summary>
     ///    This class contains logic to interoparate with processes and

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace GameTime
+namespace GameTimeClient
 {
     /// <summary>
     /// Interaction logic for App.xaml

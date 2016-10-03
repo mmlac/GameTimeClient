@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace GameTime.Tracking.Utility
+namespace GameTimeClient.Tracking.Utility
 {
     public static class Util
     {

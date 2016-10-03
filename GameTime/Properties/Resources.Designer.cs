@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace GameTime.Properties
+namespace GameTimeClient.Properties
 {
 
 

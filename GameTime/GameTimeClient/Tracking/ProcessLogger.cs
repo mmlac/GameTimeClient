@@ -1,10 +1,11 @@
-﻿using GameTime.Tracking.IO;
-using GameTime.Tracking.Utility;
+﻿using GameTime.IO;
+using GameTimeClient.Tracking.IO;
+using GameTimeClient.Tracking.Utility;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace GameTime.Tracking
+namespace GameTimeClient.Tracking
 {
     /// <summary>
     ///     ProcessLogger is responsible for tracking 3D applitacions and
@@ -12,16 +13,24 @@ namespace GameTime.Tracking
     /// </summary>
     class ProcessLogger
     {
-
+        // Intervals for the logging and aggregating / transfering of
+        // running 3D processes
         public const int INITIAL_SLEEP_TIME = 5000;
         public const int RESCAN_INTERVAL = 5000;
         public const int AGGREGATE_INTERVAL = 2000;
 
-        Storage storage;
-
+        // Variables to stop the process logging and aggregating/transfering
+        // threads
         private volatile bool _shouldStopLogging = false;
         private volatile bool _shouldStopAggregating = false;
 
+
+        Storage storage;
+        GameTimeConnection gtconn;
+
+        /// <summary>
+        ///     Disabled empty constructor. We need to get a Storage supplied
+        /// </summary>
         private ProcessLogger() { }
 
         /// <summary>
@@ -29,9 +38,10 @@ namespace GameTime.Tracking
         ///     be used to save the output of the ProcessChecker
         /// </summary>
         /// <param name="_storage">Data Store</param>
-        public ProcessLogger(Storage _storage)
+        public ProcessLogger(Storage _storage, GameTimeConnection _gtconn)
         {
-            storage = _storage; 
+            storage = _storage;
+            gtconn  = _gtconn;
         }
 
         
@@ -65,12 +75,13 @@ namespace GameTime.Tracking
             // initial reading of processes using D3D or OpenGL that we don't
             // want to track
             Thread.Sleep(INITIAL_SLEEP_TIME);
+
             List<String> ignoreProcs =
                 ProcessChecker.Get3DProcessNames(new List<String>());
 
 #if DEBUG
             Console.WriteLine("Ignoring the following processes as they were" +
-                " seem during startup: {0}", String.Join(",", ignoreProcs));
+                " seen during startup: {0}", String.Join(",", ignoreProcs));
 #endif
             Thread.Sleep(RESCAN_INTERVAL);
 
@@ -80,8 +91,11 @@ namespace GameTime.Tracking
                 {
                     List<String> procNames =
                         ProcessChecker.Get3DProcessNames(ignoreProcs);
+#if DEBUG
                     Console.WriteLine(String.Join(", ", procNames));
+#endif
                     storage.save3DProcessNames(procNames);
+
                     Thread.Sleep(RESCAN_INTERVAL);
                 }
                 catch (Exception e)
@@ -115,6 +129,12 @@ namespace GameTime.Tracking
                             k.Key, String.Join(",", k.Value));
                     }
 #endif
+
+                    if ( gtconn.sendSlices(slicedProcs) )
+                    {
+                        // delete the data just sent.
+                        // until procs[procs.Count - 1].Item1
+                    }
 
                     //if (pingList.Count > 0)
                     //    storage.deletePingsUpTo(pingList[pingList.Count - 1]);

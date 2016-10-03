@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 
-namespace GameTime.Tracking.IO
+namespace GameTimeClient.Tracking.IO
 {
     /// <summary>
     ///     Class handling all SQL related tasks    
@@ -125,7 +125,10 @@ namespace GameTime.Tracking.IO
                     try
                     {
                         pingTimes.Add(
-                            DateTime.Parse(Convert.ToString(r["time"])));
+                            DateTime.SpecifyKind(
+                                DateTime.Parse(Convert.ToString(r["time"])),
+                                DateTimeKind.Utc
+                                ));
                     } catch (Exception e)
                     {
                         Console.WriteLine(
@@ -168,7 +171,10 @@ namespace GameTime.Tracking.IO
                     try
                     {
                         procList.Add(new Tuple<DateTime, string>(
-                            DateTime.Parse(Convert.ToString(r["time"])),
+                            DateTime.SpecifyKind(
+                                DateTime.Parse(Convert.ToString(r["time"])),
+                            DateTimeKind.Utc
+                            ),
                             Convert.ToString(r["programs"])));
                     }
                     catch (Exception e)

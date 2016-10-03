@@ -1,13 +1,14 @@
-﻿using GameTime.Tracking;
-using GameTime.Tracking.IO;
-using GameTime.Tracking.Utility;
+﻿using GameTime.IO;
+using GameTimeClient.Tracking;
+using GameTimeClient.Tracking.IO;
+using GameTimeClient.Tracking.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 
-namespace GameTime
+namespace GameTimeClient
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,8 +26,9 @@ namespace GameTime
             InitializeComponent();
 
             Storage storage = new Storage();
+            GameTimeConnection gtconn = new GameTimeConnection();
 
-            procLog = new ProcessLogger(storage);
+            procLog = new ProcessLogger(storage, gtconn);
 
             processLoggerThread = new Thread(procLog.log3DProcesses);
             //processLoggerThread.Start();
