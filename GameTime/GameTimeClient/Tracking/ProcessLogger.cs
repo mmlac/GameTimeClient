@@ -3,6 +3,7 @@ using GameTimeClient.Tracking.IO;
 using GameTimeClient.Tracking.Utility;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 
 namespace GameTimeClient.Tracking
@@ -15,9 +16,9 @@ namespace GameTimeClient.Tracking
     {
         // Intervals for the logging and aggregating / transfering of
         // running 3D processes
-        public const int INITIAL_SLEEP_TIME = 5000;
-        public const int RESCAN_INTERVAL = 5000;
-        public const int AGGREGATE_INTERVAL = 2000;
+        public const int INITIAL_SLEEP_TIME = 15000;
+        public const int RESCAN_INTERVAL = 60000;
+        public const int AGGREGATE_INTERVAL = 90000;
 
         // Variables to stop the process logging and aggregating/transfering
         // threads
@@ -83,7 +84,9 @@ namespace GameTimeClient.Tracking
             Console.WriteLine("Ignoring the following processes as they were" +
                 " seen during startup: {0}", String.Join(",", ignoreProcs));
 #endif
+
             Thread.Sleep(RESCAN_INTERVAL);
+
 
             while (false == _shouldStopLogging)
             {
@@ -110,6 +113,9 @@ namespace GameTimeClient.Tracking
 
         public void aggregate()
         {
+            //NOT THREAD SAFE...  so don't call it outside of this thread or 
+            // it is not guaranteed to be right
+
             while (false == _shouldStopAggregating)
             {
                 Thread.Sleep(AGGREGATE_INTERVAL);
@@ -125,6 +131,7 @@ namespace GameTimeClient.Tracking
 #if DEBUG
                     foreach(var k in slicedProcs)
                     {
+                        logToFile(slicedProcs);
                         Console.WriteLine("Key: {0} - Slices: {1}",
                             k.Key, String.Join(",", k.Value));
                     }
@@ -145,6 +152,27 @@ namespace GameTimeClient.Tracking
                 }
             }
         }
+
+#if DEBUG
+        private void logToFile(Dictionary<String, List<TimeSlice>> slicedProcs)
+        {
+            string path = "AggregateLog.txt";
+            // This text is added only once to the file.
+            if (!File.Exists(path))
+                File.Create(path).Close();
+
+            using (StreamWriter sw = File.AppendText(path))
+            {
+                sw.WriteLine(DateTime.Now);
+                    foreach( var kv in slicedProcs)
+                    {
+                        sw.WriteLine(String.Format("{0}: {1}", 
+                            kv.Key, kv.Value));
+                    }
+                sw.WriteLine("----------------------------------------------");
+            }
+        }
+#endif
 
     }
 }

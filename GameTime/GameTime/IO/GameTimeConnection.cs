@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,15 @@ namespace GameTime.IO
     /// </summary>
     class GameTimeConnection
     {
+        private HttpClient httpGT = new HttpClient();
+
+
+
+        public GameTimeConnection()
+        {
+            httpGT.BaseAddress = new Uri("http://localhost:8282");
+        }
+        
 
         private JsonSerializerSettings jsonSettings =
             new JsonSerializerSettings
@@ -26,8 +36,12 @@ namespace GameTime.IO
         {
             try
             {
-                String jsonSlices = JsonConvert.SerializeObject(slices);
-                Console.WriteLine(jsonSlices);
+                //String jsonSlices = JsonConvert.SerializeObject(slices);
+                //Console.WriteLine(jsonSlices);
+
+                var postResponse = httpGT.PostAsJsonAsync("/", slices).Result;
+
+                return postResponse.StatusCode == System.Net.HttpStatusCode.OK;
 
                 //TODO: * build HTTPS url with auth token
                 //      * deal with token renewal, etc.
@@ -35,7 +49,7 @@ namespace GameTime.IO
                 //         class.
                 // GameTimeConnection.upload(jsonSlices)
 
-                return true;
+                //return true;
             }
             catch (Exception e)
             {

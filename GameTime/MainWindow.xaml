@@ -7,8 +7,7 @@
         mc:Ignorable="d"
         Closing="Window_Closing"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Button x:Name="button" Content="Button" HorizontalAlignment="Left" Margin="210,151,0,0" VerticalAlignment="Top" Width="75" Click="ButtonClick"/>
-
+    <Grid RenderTransformOrigin="0.489,0.403">
+        <CheckBox x:Name="startupCheckbox" Content="Start GameTime on Startup" HorizontalAlignment="Left" Margin="172,59,0,0" VerticalAlignment="Top" Checked="startupCheckbox_Checked" Unchecked="StartupCheckbox_Unchecked"/>
     </Grid>
 </Window>
